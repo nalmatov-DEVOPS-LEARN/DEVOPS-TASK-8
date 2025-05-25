@@ -1,0 +1,42 @@
+---
+- name: DEVOPS TASK 8
+  hosts: nodejs
+  become: yes
+  vars:
+    - NODEJS_VERSION: "16"
+  vars_files:
+    - secret
+  tasks:
+    - name: Download and run Node.js installer script
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_{{ NODEJS_VERSION }}.x | bash -
+      args:
+        executable: /bin/bash
+
+    - name: Install NodeJS
+      tags: nodesjs, install
+      apt:
+        name: nodejs
+        state: latest
+
+    - name: Copy application to target machine
+      ansible.builtin.copy:
+        src: templates/app/
+        dest: /home/{{ ansible_user }}/hello-world-app/
+        mode: "0755"
+
+    - name: Copy systemd service file
+      template:
+        src: app/hello-world.service
+        dest: /etc/systemd/system/hello-world-app.service
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Enable and start the application service
+      ansible.builtin.systemd:
+        name: hello-world-app.service
+        enabled: yes
+        state: started
