@@ -1,0 +1,14 @@
+[Unit]
+Description=hello world web application
+After=network.target
+StartLimitInterval=0
+
+[Service]
+Type=simple
+Restart=always 
+RestartSec=1
+User=nalmatov
+ExecStart=/usr/local/bin/docker-compose -f /home/nalmatov/hello-world-app/docker-compose.yml up -d --build
+
+[Install]
+WantedBy=multi-user.target

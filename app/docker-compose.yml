@@ -1,0 +1,8 @@
+services:
+  nodejs:
+    build: ./frontend
+    image: hello-world-frontend
+    container_name: hello-world-frontend-container
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
